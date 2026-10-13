@@ -1,0 +1,10 @@
+// 001 - Successful administrative operations on the flagship resource group
+// Purpose: baseline visibility of who changed what, and when
+// Data source: AzureActivity (subscription Activity Log via diagnostic setting)
+// Note: Azure logs Start and Success for each operation; filter on Success to avoid double counting
+// False positives: none; this is a visibility query, not an alert
+AzureActivity
+| where TimeGenerated > ago(1h)
+| where ResourceGroup =~ "rg-flagship-lab-uaen"
+| where ActivityStatusValue == "Success"
+| project TimeGenerated, Caller, OperationNameValue, ActivityStatusValue
